@@ -1,2 +1,17 @@
 ---
-# tasks file for gitlab
+
+- name: download gitlab omnibus package
+  command: wget {{ gitlab_pkg_url }} chdir=/tmp creates=/tmp/{{ gitlab_pkg_name }}
+
+- name: dpkg gitlab
+  command: dpkg -i /tmp/{{ gitlab_pkg_name }}
+
+- name: copy configuration
+  copy:
+    src=files/gitlab/
+    dest=/etc/gitlab/
+    owner=root
+    group=root
+    mode=0660
+  notify:
+    - reconfigure gitlab
